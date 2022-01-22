@@ -70,9 +70,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 self.ok_200("www" + path)
         else:
             self.method_not_allowed_405()
-            
 
-        #self.request.sendall(bytearray("OK",'utf-8'))
     
     def ok_200(self, path):
         content = self.get_content(path)
@@ -98,13 +96,11 @@ class MyWebServer(socketserver.BaseRequestHandler):
             <p>The requested URL /t.html was not found on this server.</p></body></html>"
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301
         location = "Location: http://"+str(HOST)+str(PORT)+path+"\r\n"
-        content_type = "Content-Type:"+self.get_content_type(path) + "\r\n"
-        self.request.sendall(bytearray(server_response,'utf-8'))
-        self.request.sendall(bytearray(location,'utf-8'))
+        self.request.sendall(bytearray(server_response,'utf-8'))       
         self.request.sendall(bytearray("Connection: closed\r\n\r\n",'utf-8'))
-        #self.send_info(server_response, content+location, content_type)
+        self.request.sendall(bytearray(location,'utf-8'))
 
-    
+    # Handling methods other than get
     def method_not_allowed_405(self):
         content = "<html><head><title>405 Method Not Allowed</title></head><body><h1>Not Found</h1>\
             <p>The requested method is not allowed on this server.</p></body></html>"
@@ -112,6 +108,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
         content_type = "Content-Type:"+"html" + "\r\n"
         self.send_info(server_response, content, content_type)
     
+    # read file
     def get_content(self, path):
         file_pt = open(path, "r")
         content = ""
@@ -119,6 +116,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
             content += letter
         file_pt.close()
         return content
+    
     def get_content_type(self,path):
         if "css" in path:
             return "text/css"

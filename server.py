@@ -14,6 +14,22 @@ import socketserver, os
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Copyright 2022 Yuetong(Kiana) Liu
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 #
 #
 # Furthermore it is derived from the Python documentation examples thus
@@ -38,7 +54,6 @@ class MyWebServer(socketserver.BaseRequestHandler):
         if method == "GET":
             # Getting the path specified
             path = self.data.splitlines()[0].split()[1].decode('utf-8')
-            #print("path is", path)
 
             # The webserver can return index.html from directories (paths that end in /)
             if path[-1] == "/":
@@ -57,7 +72,6 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # use 301 to correct paths 
             elif path[-1] != "/":
                 path = "www" + path + "/index.html"
-                #print("new path is ",path)
                 if not os.path.exists(path):
                     self.not_found_404()
                 else:

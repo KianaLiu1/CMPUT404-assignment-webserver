@@ -47,7 +47,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
     
     def handle(self):
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
+        # print ("Got a request of: %s\n" % self.data)
         # https://stackoverflow.com/questions/41918836/how-do-i-get-rid-of-the-b-prefix-in-a-string-in-python
         # https://www.w3schools.com/python/ref_string_split.asp
         method = self.data.split()[0].decode('utf-8')

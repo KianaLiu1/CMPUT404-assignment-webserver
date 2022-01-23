@@ -58,11 +58,19 @@ class MyWebServer(socketserver.BaseRequestHandler):
 
             # The webserver can return index.html from directories (paths that end in /)
             if path[-1] == "/":
-                path = "www" + path + "index.html"
-                if not os.path.exists(path):
+                # check if path is a parent directory of current 
+                path = "www" + path
+                path_absolute = os.path.abspath(path)
+                current_absolue = os.path.abspath("www")              
+                # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
+                if ".." in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
                     self.not_found_404()
                 else:
-                    self.ok_200(path)
+                    path = path + "index.html"
+                    if not os.path.exists(path):
+                        self.not_found_404()
+                    else:
+                        self.ok_200(path)
 
             # Get specified file
             elif "." in path and path[-1] != "/":               
@@ -71,7 +79,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                 current_absolue = os.path.abspath("www")
                 
                 # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
-                if "../" in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
+                if ".." in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
                     self.not_found_404()
 
                 elif not os.path.exists(path):

@@ -54,18 +54,27 @@ class MyWebServer(socketserver.BaseRequestHandler):
         if method == "GET":
             # Getting the path specified
             path = self.data.splitlines()[0].split()[1].decode('utf-8')
+            
 
             # The webserver can return index.html from directories (paths that end in /)
             if path[-1] == "/":
                 path = "www" + path + "index.html"
                 if not os.path.exists(path):
-                    self.not_found_404
+                    self.not_found_404()
                 else:
                     self.ok_200(path)
+
             # Get specified file
-            elif "." in path:
+            elif "." in path and path[-1] != "/":               
                 path = "www" + path
-                if not os.path.exists(path):
+                path_absolute = os.path.abspath(path)
+                current_absolue = os.path.abspath("www")
+                
+                # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
+                if "../" in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
+                    self.not_found_404()
+
+                elif not os.path.exists(path):
                     self.not_found_404()
                 else:
                     self.ok_200(path)
@@ -90,11 +99,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
         content = self.get_content(path)
         # https://reqbin.com/Article/HttpGet#:~:text=GET%20is%20an%20HTTP%20method,on%20data%20on%20the%20server.
         server_response = "HTTP/1.1 200 OK\r\n"
-        if self.get_content_type(path) is None:
-            self.not_found_404()
-        else:
-            content_type = "Content-Type:"+self.get_content_type(path) + "\r\n"
-            self.send_info(server_response, content, content_type)
+        content_type = "Content-Type:"+self.get_content_type(path) + "\r\n"
+        self.send_info(server_response, content, content_type)
 
     def not_found_404(self):
         # https://www.tutorialspoint.com/http/http_responses.htm
@@ -134,7 +140,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
     def get_content_type(self,path):
         if "css" in path:
             return "text/css"
-        if "html" in path:
+        else:
             return "text/html"
     
     def send_info(self,server_response, content, content_type):

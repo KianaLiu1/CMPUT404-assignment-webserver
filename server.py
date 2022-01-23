@@ -71,7 +71,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
                     self.ok_200(path)
             # use 301 to correct paths 
             elif path[-1] != "/":
-                path = "www" + path + "/index.html"
+                path = "www" + path + "/"
                 if not os.path.exists(path):
                     self.not_found_404()
                 else:

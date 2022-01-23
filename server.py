@@ -59,11 +59,8 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # The webserver can return index.html from directories (paths that end in /)
             if path[-1] == "/":
                 # check if path is a parent directory of current 
-                path = "www" + path
-                path_absolute = os.path.abspath(path)
-                current_absolue = os.path.abspath("www")              
-                # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
-                if ".." in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
+                path = "www" + path                            
+                if ".." in path and not self.path_validation(path):
                     self.not_found_404()
                 else:
                     path = path + "index.html"
@@ -73,13 +70,11 @@ class MyWebServer(socketserver.BaseRequestHandler):
                         self.ok_200(path)
 
             # Get specified file
-            elif "." in path and path[-1] != "/":               
+            elif ("html" in path or "css" in path) and path[-1] != "/":               
                 path = "www" + path
-                path_absolute = os.path.abspath(path)
-                current_absolue = os.path.abspath("www")
                 
                 # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
-                if ".." in path and os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
+                if ".." in path and not self.path_validation(path):
                     self.not_found_404()
 
                 elif not os.path.exists(path):
@@ -89,7 +84,11 @@ class MyWebServer(socketserver.BaseRequestHandler):
             # use 301 to correct paths 
             elif path[-1] != "/":
                 path = "www" + path + "/"
-                if not os.path.exists(path):
+            
+                if ".." in path and not self.path_validation(path):
+                    self.not_found_404()
+
+                elif not os.path.exists(path):
                     self.not_found_404()
                 else:
                     self.redirect_301(path)
@@ -157,6 +156,14 @@ class MyWebServer(socketserver.BaseRequestHandler):
         self.request.sendall(bytearray(content_type,'utf-8'))            
         self.request.sendall(bytearray("Connection: closed\r\n\r\n",'utf-8'))
         self.request.sendall(bytearray(content,'utf-8'))
+    
+    # https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
+    def path_validation(self, path):
+        path_absolute = os.path.abspath(path)
+        current_absolue = os.path.abspath("www")
+        if os.path.commonprefix([path_absolute, current_absolue]) != current_absolue:
+            return False
+        return True
         
  
 if __name__ == "__main__":

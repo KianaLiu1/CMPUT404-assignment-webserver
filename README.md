@@ -32,3 +32,4 @@ https://reqbin.com/Article/HttpGet#:~:text=GET%20is%20an%20HTTP%20method,on%20da
 https://www.tutorialspoint.com/http/http_responses.htm
 https://reqbin.com/Article/HttpGet#:~:text=GET%20is%20an%20HTTP%20method,on%20data%20on%20the%20server.
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301
+https://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory

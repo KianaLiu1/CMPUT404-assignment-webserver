@@ -123,7 +123,9 @@ class MyWebServer(socketserver.BaseRequestHandler):
             <p>The requested URL /t.html was not found on this server.</p></body></html>"
         # https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301
         location = "Location: http://"+str(HOST)+str(PORT)+path+"\r\n"
-        self.request.sendall(bytearray(server_response,'utf-8'))       
+        self.request.sendall(bytearray(server_response,'utf-8')) 
+        self.request.sendall(bytearray("Server: What is this for??\r\n",'utf-8')) 
+        self.request.sendall(bytearray("Content-Length:"+str(len(location))+"\r\n",'utf-8'))       
         self.request.sendall(bytearray("Connection: closed\r\n\r\n",'utf-8'))
         self.request.sendall(bytearray(location,'utf-8'))
 
@@ -152,6 +154,7 @@ class MyWebServer(socketserver.BaseRequestHandler):
     
     def send_info(self,server_response, content, content_type):
         self.request.sendall(bytearray(server_response,'utf-8'))
+        self.request.sendall(bytearray("Server: What is this for??\r\n",'utf-8')) 
         self.request.sendall(bytearray("Content-Length:"+str(len(content))+"\r\n",'utf-8')) 
         self.request.sendall(bytearray(content_type,'utf-8'))            
         self.request.sendall(bytearray("Connection: closed\r\n\r\n",'utf-8'))
